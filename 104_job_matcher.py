@@ -34,7 +34,7 @@ class JobMatcher:
 
         ttk.Label(self.root, text="請選擇要查詢的年資：").grid(row=2, column=0, sticky=tk.E)
         self.exp_var = tk.StringVar()
-        self.exp_combobox = ttk.Combobox(self.root, textvariable=self.exp_var, values=["一年以下", "一至三年", "三至五年", "五至十年", "十年以上"])
+        self.exp_combobox = ttk.Combobox(self.root, textvariable=self.exp_var, values=["不選擇","一年以下", "一至三年", "三至五年", "五至十年", "十年以上"])
         self.exp_combobox.grid(row=2, column=1, padx=(0, 10), pady=5, sticky=tk.W)
         self.exp_combobox.current(0)
 
@@ -74,6 +74,7 @@ class JobMatcher:
         self.page = int(self.page_entry.get())
         self.exp = self.exp_var.get()
         exp_dict = {
+            "不選擇": "0",
             "一年以下": "1",
             "一至三年": "3",
             "三至五年": "5",
@@ -88,10 +89,16 @@ class JobMatcher:
         self.analyze()
 
     def rewrite_url(self):
-        base_url = ('https://www.104.com.tw/jobs/search/?ro=0&kwop=7&keyword={}&'
-                    'expansionType=area%2Cspec%2Ccom%2Cjob%2Cwf%2Cwktm&order=12&asc=0&page={}&'
-                    'jobexp={}&mode=s&jobsource=index_s&langFlag=0&langStatus=0&recommendJob=1&hotJob=1')
-        self.url = base_url.format(self.encoded_keyword, '{}', self.exp)
+        if self.exp == "0":
+            base_url = ('https://www.104.com.tw/jobs/search/?ro=0&kwop=7&keyword={}&'
+                        'expansionType=area%2Cspec%2Ccom%2Cjob%2Cwf%2Cwktm&order=12&asc=0&page={}&'
+                        'mode=s&jobsource=index_s&langFlag=0&langStatus=0&recommendJob=1&hotJob=1')
+            self.url = base_url.format(self.encoded_keyword, '{}')
+        else:
+            base_url = ('https://www.104.com.tw/jobs/search/?ro=0&kwop=7&keyword={}&'
+                        'expansionType=area%2Cspec%2Ccom%2Cjob%2Cwf%2Cwktm&order=12&asc=0&page={}&'
+                        'jobexp={}&mode=s&jobsource=index_s&langFlag=0&langStatus=0&recommendJob=1&hotJob=1')
+            self.url = base_url.format(self.encoded_keyword, '{}', self.exp)
 
     def joblist_url(self):
         joblist = []
